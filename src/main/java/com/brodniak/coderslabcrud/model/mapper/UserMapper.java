@@ -5,6 +5,7 @@ import com.brodniak.coderslabcrud.model.User;
 import com.brodniak.coderslabcrud.model.dto.AddressDto;
 import com.brodniak.coderslabcrud.model.dto.UserDto;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class UserMapper {
@@ -30,6 +31,15 @@ public class UserMapper {
 		return userDto;
 	}
 
+	public static List<Address> mapToAddresses(final List<AddressDto> addressDtoList) {
+		return Optional.ofNullable(addressDtoList)
+				.orElse(List.of())
+				.stream()
+				.map(UserMapper::mapToAddress)
+				.collect(Collectors.toList());
+
+	}
+
 	private static AddressDto mapToAddressDto(final Address address) {
 		AddressDto addressDto = new AddressDto();
 		addressDto.setCity(address.getCity());
@@ -39,7 +49,9 @@ public class UserMapper {
 	}
 
 	private static List<AddressDto> mapToAddressesDto(final List<Address> addressList) {
-		return addressList.stream()
+		return Optional.ofNullable(addressList)
+				.orElse(List.of())
+				.stream()
 				.map(UserMapper::mapToAddressDto)
 				.collect(Collectors.toList());
 
@@ -53,10 +65,7 @@ public class UserMapper {
 		return address;
 	}
 
-	private static List<Address> mapToAddresses(final List<AddressDto> addressDtoList) {
-		return addressDtoList.stream()
-				.map(UserMapper::mapToAddress)
-				.collect(Collectors.toList());
-
+	private static User updateUser(final UserDto userDto){
+		return mapToUser(userDto);
 	}
 }

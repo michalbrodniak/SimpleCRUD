@@ -1,5 +1,6 @@
 package com.brodniak.coderslabcrud.service;
 
+import com.brodniak.coderslabcrud.model.Address;
 import com.brodniak.coderslabcrud.model.User;
 import com.brodniak.coderslabcrud.model.dto.UserDto;
 import com.brodniak.coderslabcrud.model.mapper.UserMapper;
@@ -30,5 +31,25 @@ public class UserService {
 			final User user = userRepository.findById(id)
 					.orElseThrow(() -> new RuntimeException(String.format("User with id: %s does not exist", id)));
 			return UserMapper.mapToUserDto(user);
+	}
+
+	public UserDto updateUser(final UserDto userDto){
+		User user = userRepository.findById(userDto.getId())
+				.orElse(new User());
+
+		user.setFirstName(userDto.getFirstName());
+		user.setLastName(userDto.getLastName());
+
+		List<Address> addresses = UserMapper.mapToAddresses(userDto.getAddressList());
+
+		addresses.forEach(address -> address.setUser(user));
+		user.setAddressList(addresses);
+
+		return UserMapper.mapToUserDto(userRepository.save(user));
+	}
+
+	@Transactional
+	public void deleteUserBy(final Long id){
+		userRepository.deleteById(id);
 	}
 }
